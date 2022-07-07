@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('.env').config()
 
 const express = require('express')
 const workoutRoutes = require('./routes/workouts')
