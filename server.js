@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const uri = process.env.MONGO_URI;
 const express = require('express')
 const workoutRoutes = require('./routes/workouts')
 const loginRoutes = require('./routes/login')
