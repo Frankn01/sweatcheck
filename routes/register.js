@@ -1,3 +1,10 @@
+//
+//
+// OUTDATED
+// GO TO User.js for the code on registration
+//
+//
+
 const express = require('express')
 const { default: mongoose } = require('mongoose')
 const usersImport = require('../models/UsersModel')
