@@ -155,7 +155,7 @@ router.post('/signup', (reg, res) => {
         })
     }
 
-    register.get("/verify/:userId/:uniqueString",(res,req) => {
+    signup.get("/verify/:userId/:uniqueString",(res,req) => {
         let { userId, uniqueString } = req.oarams
         verificationImport
         .find({userId})
