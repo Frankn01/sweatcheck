@@ -21,5 +21,5 @@ const usersVerificationSchema = new Schema({
 
 // the name you send below is the name that the collection will be called
 var collectionName = 'Users'
-module.exports = mongoose.model('User',usersVerificationSchema,collectionName)
+module.exports = mongoose.model('UserVerification',usersVerificationSchema,collectionName)
 
