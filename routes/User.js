@@ -7,6 +7,7 @@ const User = require('../models/UsersModel');
 
 // Password handler
 const bcrypt = require('bcrypt');
+const register = require('./register');
 
 //Register
 router.post('/signup', (reg, res) => {
@@ -155,7 +156,7 @@ router.post('/signup', (reg, res) => {
         })
     }
 
-    signup.get("/verify/:userId/:uniqueString",(res,req) => {
+    register.get("/verify/:userId/:uniqueString",(res,req) => {
         let { userId, uniqueString } = req.oarams
         verificationImport
         .find({userId})
