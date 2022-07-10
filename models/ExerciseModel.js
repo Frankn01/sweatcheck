@@ -3,27 +3,27 @@ const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
 
-const statsSchema = new Schema({
-    reps: {
-        type: Number,
+const exerciseSchema = new Schema({
+    workoutID: {
+        type: ObjectId,
         required: true
     },
-    sets:{
-        type: Number,
+    name:{
+        type: String,
         required: true
     },
-    weight: {
-        type: Number,
+    musclegroup: {
+        type: String,
         required: true
     }, 
-    exerciseID: {
-        type: ObjectId,
+    completed: {
+        type: Boolean,
         required: true
     }
 }, { versionKey: false })
 // ,{ timestamp: true }
 
 // the name you send below is the name that the collection will be called
-var collectionName = 'Stats'
-module.exports = mongoose.model('Stat',statsSchema,collectionName)
+var collectionName = 'Exercises'
+module.exports = mongoose.model('Exercises',exerciseSchema,collectionName)
 

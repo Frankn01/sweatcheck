@@ -1,11 +1,15 @@
 const express = require('express')
+const { get } = require('mongoose')
 const {
     createWorkout,
     getWorkouts,
-    getWorkout
+    getWorkout,
+    getExercise,
+    createStats
 } = require('../controllers/workoutControllers')
 
 const statsImport = require('../models/StatsModel')
+const { create } = require('../models/WorkoutsModel')
 const workoutImport = require('../models/WorkoutsModel')
 
 const router = express.Router()
@@ -19,17 +23,12 @@ router.get('/:id', getWorkout)
 //create workout
 router.post('/', createWorkout)
 
+//et a single exercise
+router.get('/:workoutID/:id', getExercise)
+
 //post a new stat    <------------------  working function *************
 // allows identical stats 7-2-22
-/*router.post('/', async (req, res) =>{
-    const {reps,sets,weight,workout} = req.body
-    try {
-        const newStats = await statsImport.create({reps,sets,weight,workout})
-        res.status(200).json(newStats)
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-})*/
+router.post('/:workoutID/:id', createStats)
 
 //delete a workout
 router.delete('/:id',(req,res)=>{
