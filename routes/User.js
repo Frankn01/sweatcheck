@@ -15,6 +15,8 @@ const nodemailer = require('nodemailer')
 // Unique string        // updated 3:32 7-9
 const {v4:uuidv4} = require('uuid')
 
+const herokuUrl = "https://sweatcheck.herokuapp.com/"
+
 
 // Email Transporter    // created 7-9
 let transporter = nodemailer.createTransport({
@@ -123,9 +125,26 @@ router.post('/signup', async (reg, res) => {
     }
 })
 
+router.post("/resendVerificationLink",(req ,res) => {
+    let {email,userId} = req.body
+    User
+    .findById(userId)
+    .then((result) => {
+        verificationEmail({email,result},res)
+    })
+    .catch(error => {
+        console.log(error)
+        res.json({
+            status: "FAILED",
+            message: "Unknown error has occured"
+        })
+    })
+})
+
 const verificationEmail = ({email,result},res) => {    // updated 7-9
     let id = result._id
-    const currentUrl = "http://localhost:"+process.env.PORT+"/"
+    // const currentUrl = "http://localhost:"+process.env.PORT+"/"
+    const currentUrl = herokuUrl
 
     const uniqueString = uuidv4() + id
     const mailOptions = {
