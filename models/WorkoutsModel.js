@@ -12,7 +12,10 @@ const workoutsSchema = new Schema({
     userID: {
         type: ObjectId,
         required: true
-    }
+    },
+    userEXERCISES: 
+        [{type: ObjectId}]
+    
 }, { versionKey: false })
 // ,{ timestamp: true }
 

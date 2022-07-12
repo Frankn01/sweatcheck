@@ -2,14 +2,13 @@ const Workout = require('../models/WorkoutsModel')
 const Exercises = require('../models/ExerciseModel')
 const Stats = require('../models/StatsModel')
 const mongoose = require('mongoose')
+const {ObjectId} = require('mongodb')
 
 // get all workouts
 const getWorkouts = async (req, res) => {
     const { id } = req.params
     const userID = id
     const workouts = await Workout.find({userID}).sort({createdAt: -1})
-
-    // .find({userId:id}).sort({createdAt: -1})
 
     res.status(200).json(workouts)
 }
@@ -23,13 +22,12 @@ const getWorkout = async (req, res) => {
     }
 
     const workout = await Workout.findById(id)
-    const exercises = await Exercises.find({workoutID: id})
 
     if(!workout) {
         return res.status(404).json({error: 'No such workout'})
     }
 
-    res.status(200).json({workout, exercises})
+    res.status(200).json({workout})
 }
 
 const getExercise = async (req, res) => {
@@ -55,12 +53,15 @@ const getExercise = async (req, res) => {
     }
 
     res.status(200).json(exercise)
-
 }
 
 // create new workout
 const createWorkout = async (req, res) => {
     const {name, userID} = req.body
+
+    //why am i sending these
+    //const exercises = await Exercises.find({})
+    //console.log(exercises)
 
     try {
         const workout = await Workout.create({name, userID})
@@ -120,12 +121,16 @@ const createStats = async (req, res) =>{
     }
 }
 
+// add exercise
+
+//search exercise
+
 module.exports = {
     getWorkouts,
     getWorkout,
     getExercise,
-    createWorkout,
-    createStats,
     deleteWorkout,
-    updateWorkout
+    updateWorkout,
+    createWorkout,
+    createStats
 }
