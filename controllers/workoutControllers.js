@@ -57,14 +57,14 @@ const getExercise = async (req, res) => {
 
 // create new workout
 const createWorkout = async (req, res) => {
-    const {name, userID} = req.body
+    const {name, userID, userEXERCISES} = req.body
 
     //why am i sending these
     //const exercises = await Exercises.find({})
     //console.log(exercises)
 
     try {
-        const workout = await Workout.create({name, userID})
+        const workout = await Workout.create({name, userID, userEXERCISES})
         res.status(200).json(workout)
     }   catch (error)   {
         res.status(400).json({error: error.message})

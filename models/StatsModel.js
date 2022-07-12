@@ -19,6 +19,10 @@ const statsSchema = new Schema({
     exerciseID: {
         type: ObjectId,
         required: true
+    },
+    userID: {
+        type: ObjectId,
+        required: true
     }
 }, { versionKey: false })
 // ,{ timestamp: true }

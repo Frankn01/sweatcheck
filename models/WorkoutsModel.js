@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb')
 const mongoose = require('mongoose')
+const { stringify } = require('nodemon/lib/utils')
 
 const Schema = mongoose.Schema
 
@@ -13,8 +14,10 @@ const workoutsSchema = new Schema({
         type: ObjectId,
         required: true
     },
-    userEXERCISES: 
-        [{type: ObjectId}]
+    userEXERCISES: [[{
+        type: ObjectId,
+        type: String
+    }]]
     
 }, { versionKey: false })
 // ,{ timestamp: true }
