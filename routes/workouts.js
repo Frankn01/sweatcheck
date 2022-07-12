@@ -5,7 +5,9 @@ const {
     getWorkouts,
     getWorkout,
     getExercise,
-    createStats
+    createStats,
+    deleteWorkout,
+    updateWorkout
 } = require('../controllers/workoutControllers')
 
 const statsImport = require('../models/StatsModel')
@@ -23,7 +25,7 @@ router.get('/:id', getWorkout)
 //create workout
 router.post('/', createWorkout)
 
-//et a single exercise
+//get a single exercise
 router.get('/:workoutID/:id', getExercise)
 
 //post a new stat    <------------------  working function *************
@@ -31,13 +33,9 @@ router.get('/:workoutID/:id', getExercise)
 router.post('/:workoutID/:id', createStats)
 
 //delete a workout
-router.delete('/:id',(req,res)=>{
-    res.json({msg: 'delete workout'})
-})
+router.delete('/:id', deleteWorkout)
 
 //update a workout
-router.patch('/:id',(req,res)=>{
-    res.json({msg: 'update a workout'})
-})
+router.patch('/:id', updateWorkout)
 
 module.exports = router 
