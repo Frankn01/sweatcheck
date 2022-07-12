@@ -17,7 +17,7 @@ const workoutImport = require('../models/WorkoutsModel')
 const router = express.Router()
 
 //get all workouts <------------------  working function *************
-router.get('/', getWorkouts)
+router.get('/all/:id', getWorkouts)
 
 //get a single workout
 router.get('/:id', getWorkout)
