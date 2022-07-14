@@ -1,5 +1,8 @@
 require('dotenv').config();
 
+const cors = require("cors");
+app.use(cors());
+
 const uri = process.env.MONGO_URI;
 const express = require('express')
 const workoutRoutes = require('./routes/workouts')
