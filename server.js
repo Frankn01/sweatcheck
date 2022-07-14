@@ -1,11 +1,9 @@
 require('dotenv').config();
 
 
-const uri = process.env.MONGO_URI;
-const express = require('express');
-const cors = require("cors");
-express.use(cors());
 
+const uri = process.env.MONGO_URI;
+const express = require('express')
 
 const workoutRoutes = require('./routes/workouts')
 const loginRoutes = require('./routes/login')
@@ -22,6 +20,9 @@ app.use((req,res,next) => {
     console.log(req.path, req.method)
     next()
 })
+
+const cors = require("cors");
+app.use(cors());
 
 //routes
 app.use('/api/workouts',workoutRoutes)
