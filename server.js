@@ -2,7 +2,7 @@ require('dotenv').config();
 
 
 const uri = process.env.MONGO_URI;
-const express = require('express')
+const express = require('express');
 const cors = require("cors");
 express.use(cors());
 
