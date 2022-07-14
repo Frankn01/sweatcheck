@@ -14,10 +14,14 @@ const workoutsSchema = new Schema({
         type: ObjectId,
         required: true
     },
-    userEXERCISES: [[{
-        type: ObjectId,
-        type: String
-    }]]
+    userEXERCISES: {
+        type: Object
+        /*type: ObjectId,
+        type: String,
+        type: String,
+        type: Boolean
+        */
+    }
     
 }, { versionKey: false })
 // ,{ timestamp: true }

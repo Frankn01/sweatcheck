@@ -1,9 +1,8 @@
 require('dotenv').config();
 
-
-
 const uri = process.env.MONGO_URI;
 const express = require('express')
+const Exercises = require('./models/ExerciseModel')
 
 const workoutRoutes = require('./routes/workouts')
 const loginRoutes = require('./routes/login')
@@ -23,6 +22,7 @@ app.use((req,res,next) => {
 
 const cors = require("cors");
 app.use(cors());
+
 
 //routes
 app.use('/api/workouts',workoutRoutes)

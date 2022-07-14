@@ -30,23 +30,16 @@ const getWorkout = async (req, res) => {
     res.status(200).json({workout})
 }
 
+// get an Exercise
+
 const getExercise = async (req, res) => {
     const { workoutID, id  } = req.params
-
-    if (!mongoose.Types.ObjectId.isValid(workoutID)){
-        return res.status(404).json({error: 'No such workout'})
-    }
 
     if (!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json({error: 'No such exercise'})
     }
 
-    const workout = await Workout.findById(workoutID)
-    const exercise = await Exercises.find({workoutID: workoutID, _id: id})
-
-    if(!workout) {
-        return res.status(404).json({error: 'No such workout'})
-    }
+    const exercise = await Exercises.find({_id: id})
  
     if(!exercise) {
         return res.status(404).json({error: 'No such exercise'})
@@ -58,10 +51,6 @@ const getExercise = async (req, res) => {
 // create new workout
 const createWorkout = async (req, res) => {
     const {name, userID, userEXERCISES} = req.body
-
-    //why am i sending these
-    //const exercises = await Exercises.find({})
-    //console.log(exercises)
 
     try {
         const workout = await Workout.create({name, userID, userEXERCISES})
@@ -80,7 +69,6 @@ const deleteWorkout = async (req, res) =>{
     }
 
     const workout = await Workout.findByIdAndDelete(id)
-    //const exercises = await Exercises.find({workoutID: id})
 
     if(!workout) {
         return res.status(404).json({error: 'No such workout'})
@@ -114,16 +102,28 @@ const createStats = async (req, res) =>{
     const {reps, sets, weight, exerciseID} = req.body
 
     try {
-        const newStats = await Stats.create({reps, sets, weight, exerciseID: id})
+        const newStats = await Stats.create({reps, sets, weight, exerciseID: id, userID})
         res.status(200).json(newStats)
     } catch (error) {
         res.status(400).json({error: error.message})
     }
 }
 
-// add exercise
+// search exercise
+const searchExercises = async (req, res, next) => {
+    const filters = req.query;
+    console.log(filters)
+    const filteredUsers = await Exercises.filter(user => {
+    let isValid = true;
+    for (key in filters) {
+      console.log(key, user[key], filters[key]);
+      isValid = isValid && user[key] == filters[key];
+    }
+    return isValid;
+  }).clone().catch(function(err){console.log(err)});
+  res.send(filteredUsers);
+}
 
-//search exercise
 
 module.exports = {
     getWorkouts,
@@ -132,5 +132,6 @@ module.exports = {
     deleteWorkout,
     updateWorkout,
     createWorkout,
-    createStats
+    createStats,
+    searchExercises
 }
