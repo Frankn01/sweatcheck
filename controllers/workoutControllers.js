@@ -6,22 +6,22 @@ const {ObjectId} = require('mongodb')
 
 // get all workouts
 const getWorkouts = async (req, res) => {
-    const { id } = req.params
-    const userID = id
-    const workouts = await Workout.find({userID}).sort({createdAt: -1})
+    const { userID } = req.params
+
+    const workouts = await Workout.find({userID: userID}).sort({createdAt: -1})
 
     res.status(200).json(workouts)
 }
 
 // get a single workout
 const getWorkout = async (req, res) => {
-    const { id } = req.params
+    const { workoutID } = req.params
     
-    if (!mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(workoutID)){
         return res.status(404).json({error: 'No such workout'})
     }
 
-    const workout = await Workout.findById(id)
+    const workout = await Workout.findById(workoutID)
 
     if(!workout) {
         return res.status(404).json({error: 'No such workout'})
@@ -86,13 +86,13 @@ const getStat = async (req, res) => {
 
 // delete a workout
 const deleteWorkout = async (req, res) =>{
-    const { id } = req.params
+    const { workoutID } = req.params
     
-    if (!mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(workoutID)){
         return res.status(404).json({error: 'No such workout'})
     }
 
-    const workout = await Workout.findByIdAndDelete(id)
+    const workout = await Workout.findByIdAndDelete(workoutID)
 
     if(!workout) {
         return res.status(404).json({error: 'No such workout'})
@@ -103,13 +103,13 @@ const deleteWorkout = async (req, res) =>{
 
 // update a workout
 const updateWorkout = async (req, res) =>{
-    const { id } = req.params
+    const { workoutID } = req.params
     
-    if (!mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(workoutID)){
         return res.status(404).json({error: 'No such workout'})
     }
 
-    const workout = await Workout.findOneAndUpdate({_id: id}, {
+    const workout = await Workout.findOneAndUpdate({_id: workoutID}, {
     ...req.body
     })
 
