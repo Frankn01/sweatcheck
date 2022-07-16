@@ -49,11 +49,11 @@ const getExercise = async (req, res) => {
 }
 
 const getStats = async (req, res) => {
-
     const { userID } = req.params
-    const workouts = await Stats.find({userID: userID}).sort({createdAt: -1})
 
-    res.status(200).json(workouts)
+    const stats = await Stats.find({userID: userID}).sort({createdAt: -1})
+
+    res.status(200).json(stats)
 }
 
 // create new workout
@@ -66,6 +66,22 @@ const createWorkout = async (req, res) => {
     }   catch (error)   {
         res.status(400).json({error: error.message})
     }
+}
+
+const getStat = async (req, res) => {
+    const { statID  } = req.params
+
+    if (!mongoose.Types.ObjectId.isValid(statID)){
+        return res.status(404).json({error: 'No such exercise'})
+    }
+
+    const stat = await Stats.find({_id: statID})
+ 
+    if(!stat) {
+        return res.status(404).json({error: 'No such exercise'})
+    }
+
+    res.status(200).json(stat)
 }
 
 // delete a workout
@@ -142,6 +158,7 @@ module.exports = {
     getWorkout,
     getExercise,
     getStats,
+    getStat,
     deleteWorkout,
     updateWorkout,
     createWorkout,

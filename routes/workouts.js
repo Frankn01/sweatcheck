@@ -6,6 +6,7 @@ const {
     getWorkout,
     getExercise,
     getStats,
+    getStat,
     createStats,
     deleteWorkout,
     updateWorkout,
@@ -23,6 +24,8 @@ router.get('/all/:userID', getWorkouts)
 
 //get all stats <------------------  working function *************
 router.get('/all/stats/:userID', getStats)
+
+router.get('/stats/:statID', getStat)
 
 //search exercises
 router.get('/search/:workoutID', searchExercises)
