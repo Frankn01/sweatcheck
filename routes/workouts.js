@@ -5,6 +5,7 @@ const {
     getWorkouts,
     getWorkout,
     getExercise,
+    getStats,
     createStats,
     deleteWorkout,
     updateWorkout,
@@ -19,6 +20,9 @@ const router = express.Router()
 
 //get all workouts <------------------  working function *************
 router.get('/all/:userID', getWorkouts)
+
+//get all stats <------------------  working function *************
+router.get('/all/stats/:userID', getStats)
 
 //search exercises
 router.get('/search/:workoutID', searchExercises)
