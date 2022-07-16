@@ -103,7 +103,11 @@ const createStats = async (req, res) =>{
 
     try {
         const newStats = await Stats.create({reps, sets, weight, exerciseID: id, userID})
-        res.status(200).json(newStats)
+        res.json({
+            status: "SUCCESS",
+            message: "Stats were successfully created!",
+            data: newStats
+        })
     } catch (error) {
         res.status(400).json({error: error.message})
     }
