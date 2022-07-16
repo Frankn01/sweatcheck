@@ -5,17 +5,25 @@ const verificationImport = require('../models/UserVerificationModel')
 // mongodb user model
 const User = require('../models/UsersModel');
 
+const mongoose = require("mongoose")
+
 // Password handler
 const bcrypt = require('bcrypt');
 // const register = require('./register');
+
+// mongodb user Password reset link
+const PasswordReset = require("./../models/PasswordReset")
 
 // Email handeler       // updated 3:32 7-9
 const nodemailer = require('nodemailer')
 
 // Unique string        // updated 3:32 7-9
-const {v4:uuidv4} = require('uuid')
+const {v4:uuidv4} = require('uuid');
+const { deleteOne } = require('./../models/PasswordReset');
 
 const herokuUrl = "https://sweatcheck.herokuapp.com/"
+
+const redirectUrl = herokuUrl + "api/user/resetPassword"     // should end up being the page where the user can enter a new password
 
 
 // Email Transporter    // created 7-9
@@ -125,11 +133,12 @@ router.post('/signup', async (reg, res) => {
     }
 })
 
-router.post("/resendVerificationLink",(req ,res) => {
+router.post("/resendVerificationLink", async (req ,res) => {
     let {email,userId} = req.body
-    User
+    await User
     .findById(userId)
     .then((result) => {
+        console.log(result)
         verificationEmail({email,result},res)
     })
     .catch(error => {
@@ -141,64 +150,73 @@ router.post("/resendVerificationLink",(req ,res) => {
     })
 })
 
-const verificationEmail = ({email,result},res) => {    // updated 7-9
-    let id = result._id
-    // const currentUrl = "http://localhost:"+process.env.PORT+"/"
-    const currentUrl = herokuUrl
 
-    const uniqueString = uuidv4() + id
-    const mailOptions = {
-        from: process.env.AUTH_EMAIL,
-        to: email,
-        subject: "Verify Your Email",
-        html: `<p>Verify your email address to complete the signup and login</p><p>This link will <b>expire in 6 hours</b>.</p><p> press <a href=${ currentUrl + "api/user/verify/" + id +"/"+ uniqueString }>here</a> to proceed</p>`
-    }
-    // hash the unique string
-    const saltRounds = 10
-    bcrypt
-    .hash(uniqueString,saltRounds)
-    .then((hashedUniqueString) => {
-        const newVerification = new verificationImport({
-            user: id,
-            uniqueString: hashedUniqueString,
-            createdAt: Date.now(),
-            expiresAt: Date.now()+21600000
-        })
+    const verificationEmail = async ({email,result},res) => {    // updated 7-15
+        let id = result._id
+        // const currentUrl = "http://localhost:"+process.env.PORT+"/"
+        const currentUrl = herokuUrl
 
-        newVerification
-        .save()
-        .then(() =>
-            transporter
-            .sendMail(mailOptions)
-            .then(() => {       // i cannot get these responses to work,with new user "SUCCESS" status
+        const uniqueString = uuidv4() + id
+        const mailOptions = {
+            from: process.env.AUTH_EMAIL,
+            to: email,
+            subject: "Verify Your Email",
+            html: `<p>Verify your email address to complete the signup and login</p><p>This link will <b>expire in 6 hours</b>.</p><p> press <a href=${ currentUrl + "api/user/verify/" + id +"/"+ uniqueString }>here</a> to proceed</p>`
+        }
+        // hash the unique string
+        const saltRounds = 10
+        await bcrypt
+        .hash(uniqueString,saltRounds)
+        .then((hashedUniqueString) => {
+            const newVerification = new verificationImport({
+                user: id,
+                uniqueString: hashedUniqueString,
+                createdAt: Date.now(),
+                expiresAt: Date.now()+21600000
+            })
+            verificationImport
+            .deleteMany({user:id})  // new line 7-15
+            .catch(error => {
                 res.json({
-                    status: "PENDING",
-                    message: "Verification email sent",
-                    data: result
+                    status: "FAILED",
+                    message: "Didn't delete verification request",
                 })
             })
+
+            newVerification
+            .save()
+            .then(() =>
+                transporter
+                .sendMail(mailOptions)
+                .then(() => {       // i cannot get these responses to work,with new user "SUCCESS" status
+                    res.json({
+                        status: "PENDING",
+                        message: "Verification email sent",
+                        data: result
+                    })
+                })
+                .catch(error => {
+                    console.log(error)
+                    res.json({
+                        status: "FAILED",
+                        message: "Verification email failed",
+                    })
+                })
+                )
             .catch(error => {
                 console.log(error)
                 res.json({
                     status: "FAILED",
-                    message: "Verification email failed",
+                    message: "Couldn't save verification email data",
                 })
-            })
-            )
-        .catch(error => {
-            console.log(error)
+            }
+        )})
+        .catch((error) => {
             res.json({
                 status: "FAILED",
-                message: "Couldn't save verification email data",
+                message: "An error occured while hashing email data",
             })
-        }
-    )})
-    .catch((error) => {
-        res.json({
-            status: "FAILED",
-            message: "An error occured while hashing email data",
         })
-    })
 }
     
 
@@ -358,5 +376,209 @@ router.post('/signin', (req, res) => {
         })
     }
 })
+
+router.post("/requestPasswordReset", async (req,res) => {
+    let {email} = req.body
+    await User
+    .find({email})
+    .then((data) => {
+       
+        if(data.length) {
+            
+            if(!data[0].verified) {
+                console.log(!data[0].verified)
+                res.json({
+                    status: "FAILED",
+                    message: "Email hasn't been verified yet. Check your inbox"
+                })
+            }else {
+                const id = data[0].id
+                sendResetEmail({id,email,redirectUrl},res)
+            }
+        } else {
+            res.json({
+                status: "FAILED",
+                message: "No account with the supplied email exists!"
+            })
+        }
+    })
+    .catch(error => {
+        console.log(error)
+        res.json({
+            status: "FAILED",
+            message: "An error occured checking for Existing user"
+        })
+    })
+})
+
+const sendResetEmail = async ({id,email,redirectUrl},res) => {
+    const resetString = uuidv4() + id
+
+    await PasswordReset
+    .deleteMany({user: id})
+    .then(result => {
+        const mailOptions = {
+            from: process.env.AUTH_EMAIL,
+            to: email,
+            subject: "Reset Password",
+            html: `<p>We heard that you lost the password.</p> <p>Don't worry, use the link below to reset it.</p><p>This link <b>expires in 60 minutes</b>.</p><p>Press <a href=${ redirectUrl + "/" + id +"/"+ resetString }>here</a> to proceed.</p>`
+        }
+
+        const saltRounds = 10
+        bcrypt
+        .hash(resetString,saltRounds)
+        .then(hashedResetString => {
+            // set values in password reset collection
+            const newPasswordReset = new PasswordReset({
+                user: id,
+                resetString:hashedResetString,
+                createdAt: Date.now(),
+                expiresAt: Date.now()+ 3600000
+            })
+
+            newPasswordReset
+            .save()
+            .then(() => {
+                transporter
+                .sendMail(mailOptions)
+                .then( () => {       
+                    res.json({
+                        status: "PENDING",
+                        message: "Password reset email sent"
+                    })
+                })
+            })
+            .catch(error => {
+                console.log(error)
+                res.json({
+                    status: "FAILED",
+                    message: "Couldn't save password reset data"
+                })
+            })
+        })
+        .catch(error => {
+            console.log(error)
+            res.json({
+                status: "FAILED",
+                message: "An error occured while hashing the password reset data"
+            })
+        })
+    })
+    .catch(error => {
+        console.log(error)
+        res.json({
+            status: "FAILED",
+            message: "Clearing existing password reset records failed"
+        })
+    })
+}
+
+
+router.post("/resetPassword/:userId/:resetString", (req,res) => {
+    let { userId, resetString} = req.params
+    let {newPassword} = req.body
+    PasswordReset
+    .find({user:userId})
+    .then((result) => {
+        // console.log(result.length)
+        if(result.length > 0){
+            const {expiresAt} = result[0]
+            if(expiresAt < Date.now()){
+
+                PasswordReset
+                .deleteOne({user:userId})
+                .then(() => {
+                    res.json({
+                        status: "FAILED",
+                        message: "Checking for existing password reset record failed 0."
+                    })
+                })
+                .catch(error => {
+                    console.log(error)
+                    res.json({
+                        status: "FAILED",
+                        message: "Clearing password reset record failed."
+                    })
+                })
+            }else{
+                // valid reset record
+                // need a line here that says what the hashed reset string is
+                const hashedResetString = result[0].resetString
+                bcrypt
+                .compare(resetString,hashedResetString)
+                .then((result) => {
+                    if(result){
+                        // strings matched
+                        // hash password again
+                        const saltRounds = 10
+                        bcrypt
+                        .hash(newPassword,saltRounds)
+                        .then(hashedNewPassword => {
+                            User
+                            .updateOne({_id:userId},{password: hashedNewPassword})
+                            .then(() => {
+
+                                PasswordReset
+                                .deleteMany({resetString:hashedResetString})
+                                .catch(error => {
+                                    res.json({
+                                        status: "FAILED",
+                                        message: "Error occured deleting reset request."
+                                    })
+                                })
+                                
+                                res.json({
+                                    status: "SUCCESS",
+                                    message: "Password has been reset successfully."
+                                })
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                res.json({
+                                    status: "FAILED",
+                                    message: "Updating user password failed."
+                                })
+                            })
+                        })
+                        
+                        .catch(error => {
+                            console.log(error)
+                            res.json({
+                                status: "FAILED",
+                                message: "An error occured while hashing the password reset data"
+                            })
+                        })
+                        //we end here
+                    }else {
+                        res.json({
+                            status: "FAILED",
+                            message: "Invalid password reset details passed."
+                        })
+                    }
+                })
+                .catch(error => {
+                    res.json({
+                        status: "FAILED",
+                        message: "Comparing password reset strings failed."
+                    })
+                })
+            }
+
+        }else{
+            res.json({
+                status: "FAILED",
+                message: "Password reset request not found."
+            })
+        }
+    })
+    .catch(error => {
+        console.log(error)
+        res.json({
+            status: "FAILED",
+            message: "Checking for existing password reset record failed."
+        })
+    })
+})
+
 
 module.exports = router;
