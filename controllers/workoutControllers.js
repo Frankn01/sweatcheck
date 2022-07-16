@@ -33,13 +33,13 @@ const getWorkout = async (req, res) => {
 // get an Exercise
 
 const getExercise = async (req, res) => {
-    const { workoutID, id  } = req.params
+    const { workoutID, exerciseID  } = req.params
 
-    if (!mongoose.Types.ObjectId.isValid(id)){
+    if (!mongoose.Types.ObjectId.isValid(exerciseID)){
         return res.status(404).json({error: 'No such exercise'})
     }
 
-    const exercise = await Exercises.find({_id: id})
+    const exercise = await Exercises.find({_id: exerciseID})
  
     if(!exercise) {
         return res.status(404).json({error: 'No such exercise'})
@@ -99,7 +99,7 @@ const updateWorkout = async (req, res) =>{
 // add stats to an exercise
 const createStats = async (req, res) =>{
     const {workoutID, id} = req.params
-    const {reps, sets, weight, exerciseID} = req.body
+    const {reps, sets, weight, exerciseID, userID} = req.body
 
     try {
         const newStats = await Stats.create({reps, sets, weight, exerciseID: id, userID})
@@ -121,7 +121,7 @@ const searchExercises = async (req, res, next) => {
     }
     return isValid;
   }).clone().catch(function(err){console.log(err)});
-  res.send(filteredUsers);
+  res.send("filteredUsers");
 }
 
 

@@ -15,12 +15,31 @@ const workoutsSchema = new Schema({
         required: true
     },
     userEXERCISES: {
-        type: Object
-        /*type: ObjectId,
-        type: String,
-        type: String,
-        type: Boolean
-        */
+        type: Array,
+        required: true,
+        items:{
+            type: Object,
+            required: true,
+            additionalProperties: false,
+            Properties:{
+                exerciseID: {
+                    type: ObjectId,
+                    required: true
+                },
+                name: {
+                    type: String,
+                    required: true
+                },
+                musclegroup: {
+                    type: String,
+                    required: true
+                },
+                complete: {
+                    type: Boolean,
+                    required: true
+                }
+            }
+        }
     }
     
 }, { versionKey: false })

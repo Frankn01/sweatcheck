@@ -18,28 +18,28 @@ const workoutImport = require('../models/WorkoutsModel')
 const router = express.Router()
 
 //get all workouts <------------------  working function *************
-router.get('/all/:id', getWorkouts)
+router.get('/all/:userID', getWorkouts)
+
+//search exercises
+router.get('/search/:workoutID', searchExercises)
 
 //get a single workout <------------------  working function *************
-router.get('/:id', getWorkout)
+router.get('/:workoutID', getWorkout)
 
 //create workout <------------------  working function *************
 router.post('/', createWorkout)
 
 //get a single exercise <------------------  working function *************
-router.get('/:workoutID/:id', getExercise)
+router.get('/:workoutID/:exerciseID', getExercise)
 
 //post a new stat    <------------------  working function *************
 // allows identical stats 7-2-22
 router.post('/:workoutID/:id', createStats)
 
 //delete a workout <------------------  working function *************
-router.delete('/:id', deleteWorkout)
+router.delete('/:workoutID', deleteWorkout)
 
 //update a workout <------------------  working function *************
-router.patch('/:id', updateWorkout)
-
-//search exercises
-//router.get('/search/:workoutID', searchExercises)
+router.patch('/:workoutID', updateWorkout)
 
 module.exports = router 
