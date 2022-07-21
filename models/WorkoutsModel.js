@@ -18,27 +18,23 @@ const workoutsSchema = new Schema({
         type: Array,
         required: true,
         items:{
-            type: Object,
+            /*type: Object,
             required: true,
             additionalProperties: false,
-            Properties:{
+            Properties:{*/
                 exerciseID: {
-                    type: ObjectId,
-                    required: true
+                    type: ObjectId
                 },
                 name: {
-                    type: String,
-                    required: true
+                    type: String
                 },
                 musclegroup: {
-                    type: String,
-                    required: true
+                    type: String
                 },
                 complete: {
-                    type: Boolean,
-                    required: true
+                    type: Boolean
                 }
-            }
+            //}
         }
     }
     

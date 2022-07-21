@@ -6,8 +6,7 @@ const {ObjectId} = require('mongodb')
 
 // get all workouts
 const getWorkouts = async (req, res) => {
-    const { userID } = req.params
-
+    const userID = req.user.userId
     const workouts = await Workout.find({userID: userID}).sort({createdAt: -1})
 
     res.status(200).json(workouts)
@@ -49,7 +48,9 @@ const getExercise = async (req, res) => {
 }
 
 const getStats = async (req, res) => {
-    const { userID } = req.params
+    // const { userID } = req.params
+    const userID = req.user.userId
+
 
     const stats = await Stats.find({userID: userID}).sort({createdAt: -1})
 
@@ -139,17 +140,12 @@ const createStats = async (req, res) =>{
 
 // search exercise
 const searchExercises = async (req, res, next) => {
-    const filters = req.query;
-    console.log(filters)
-    const filteredUsers = await Exercises.filter(user => {
-    let isValid = true;
-    for (key in filters) {
-      console.log(key, user[key], filters[key]);
-      isValid = isValid && user[key] == filters[key];
-    }
-    return isValid;
-  }).clone().catch(function(err){console.log(err)});
-  res.send("filteredUsers");
+    let data = await Exercises.find({
+        "$or": [
+            {name:{$regex:req.params.key}}
+        ]
+    })
+    res.send(data)
 }
 
 

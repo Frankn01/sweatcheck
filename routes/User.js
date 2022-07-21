@@ -2,10 +2,15 @@ const express = require('express');
 const router = express.Router();
 const verificationImport = require('../models/UserVerificationModel')
 
+// jwt
+const jwt = require('jsonwebtoken');
+
 // mongodb user model
 const User = require('../models/UsersModel');
 
 const mongoose = require("mongoose")
+
+ const path = require('path')
 
 // Password handler
 const bcrypt = require('bcrypt');
@@ -39,7 +44,7 @@ let transporter = nodemailer.createTransport({
 
 
 
-//Register          // updated 7-9
+//Register          // updated 7-16
 router.post('/signup', async (reg, res) => {
     let {firstName, lastName, email, login, password} = reg.body;
     firstName = firstName.trim();
@@ -89,33 +94,35 @@ router.post('/signup', async (reg, res) => {
                 bcrypt
                 .hash(password, saltRounds)
                 .then(hashedPassword => {
+                    const token = jwt.sign(
+                        { userId: User._id, email },
+                        process.env.JWT_SECRET_KEY,
+                        {
+                        expiresIn: "2h",
+                        }
+                    );
+
                     const newUser = new User({
                         firstName,
                         lastName,
                         email,
                         login,
                         password: hashedPassword,
-                        verified: false //user is never initially verified
-                        
+                        verified: false, //user is never initially verified
+                        token
                     });
 
                     newUser.save().then(result => {
-                            //send an error of doubleheader
-                        // res.json({
-                        //     // status: "SUCCESS",
-                        //     message: "User was successfully created!",
-                        //     data: result,
-                        // })
-                         //send email
                         verificationEmail({email,result},res)          //code that sends the email
-                        
                     }).catch(err => {
+                        console.log(err)
                         res.json({
                             status: "FAILED",
                             message: "User could not be created"
                         })
                     })
                 }).catch(err => {
+                    console.log(err)
                     res.json({
                         status: "FAILED",
                         message: "An error occured while hashing password!"
@@ -133,12 +140,13 @@ router.post('/signup', async (reg, res) => {
     }
 })
 
+    // doesnt need jwt
 router.post("/resendVerificationLink", async (req ,res) => {
     let {email,userId} = req.body
     await User
     .findById(userId)
     .then((result) => {
-        console.log(result)
+        // console.log(result)
         verificationEmail({email,result},res)
     })
     .catch(error => {
@@ -150,7 +158,7 @@ router.post("/resendVerificationLink", async (req ,res) => {
     })
 })
 
-
+    
     const verificationEmail = async ({email,result},res) => {    // updated 7-15
         let id = result._id
         // const currentUrl = "http://localhost:"+process.env.PORT+"/"
@@ -219,7 +227,7 @@ router.post("/resendVerificationLink", async (req ,res) => {
         })
 }
     
-
+    // doesnt need jwt
     router.get("/verify/:userId/:uniqueString",(req,res) => {       //updated 7-10
         let { userId, uniqueString } = req.params
         verificationImport
@@ -267,7 +275,7 @@ router.post("/resendVerificationLink", async (req ,res) => {
                                 .deleteOne({userId})
                                 .then(() => {
                                     res.redirect('/verified')       //can delete when next line works properly 7-10
-                                    // res.sendFile(path.join(__dirname, "./../views/verified.html"))       // i dont know what this does 7-10
+                                    // res.sendFile(path.join(__dirname, "./../views/verified.html"))       
                                 })
                                 .catch(error => {
                                     console.log(error)
@@ -307,8 +315,9 @@ router.post("/resendVerificationLink", async (req ,res) => {
 
     })
 
-    router.get("/verified", (res,req) => {
-        res.sendFile(path.join(_dirname, "./../views/verified.html"))//might need to change
+    // doesnt need jwt
+    router.get("/verified", (req,res) => {
+        res.sendFile(path.join(__dirname, "./../views/verified.html"))//might need to change
     })
 
 
@@ -340,12 +349,31 @@ router.post('/signin', (req, res) => {
                     const hashedPassword = data[0].password;
                     bcrypt.compare(password, hashedPassword).then(result => {
                     if (result) {
-                        //Password match
-                        res.json({
-                            status: "SUCCESS",
-                            message: "Signin sucessful",
-                            data: data
-                        })
+                        const email = data[0].email
+                        const userId = data[0]._id
+                        console.log(email+" "+userId)
+                        const token1 = jwt.sign(
+                            { userId:userId , email},       // id and email are really all that is needed, might implement workouts/Exercises
+                            process.env.JWT_SECRET_KEY,
+                            {
+                              expiresIn: "2h",
+                            }
+                          );
+                          // save user token
+                          User
+                          .findByIdAndUpdate({_id: userId}, {token:token1},{new:true})
+                          .then((data) => {
+                            //Password match
+                            res.json({
+                                status: "SUCCESS",
+                                message: "Signin sucessful",
+                                data: data
+                            })
+                          })
+                          .catch(error => {
+                            console.log(error)
+                          })
+                        
                     } else {
                         res.json({
                             status: "FAILED",
@@ -354,6 +382,7 @@ router.post('/signin', (req, res) => {
                         
                     }
                 }).catch(err => {
+                    console.log(err)
                     res.json({
                         status: "FAILED",
                         message: "An error occurred while comparing passwords"
@@ -473,7 +502,7 @@ const sendResetEmail = async ({id,email,redirectUrl},res) => {
     })
 }
 
-
+    // doesnt need jwt
 router.post("/resetPassword/:userId/:resetString", (req,res) => {
     let { userId, resetString} = req.params
     let {newPassword} = req.body

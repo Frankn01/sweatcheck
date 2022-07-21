@@ -16,19 +16,21 @@ const {
 const statsImport = require('../models/StatsModel')
 const { create } = require('../models/WorkoutsModel')
 const workoutImport = require('../models/WorkoutsModel')
+const verifyToken = require('../middleware/authentication')
 
 const router = express.Router()
 
 //get all workouts <------------------  working function *************
-router.get('/all/:userID', getWorkouts)
+router.get('/all/:userID', verifyToken, getWorkouts)    // can get rid of userID in url
 
 //get all stats <------------------  working function *************
-router.get('/all/stats/:userID', getStats)
+router.get('/all/stats/:userID', verifyToken, getStats)
 
+//get a single stat
 router.get('/stats/:statID', getStat)
 
 //search exercises
-router.get('/search/:workoutID', searchExercises)
+router.get('/search/:key', searchExercises)
 
 //get a single workout <------------------  working function *************
 router.get('/:workoutID', getWorkout)
