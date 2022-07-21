@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+Email verification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {background-color:#777777;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+h1{text-align:center;font-family:Times, serif;color:#000000;background-color:#777777;}
+p {text-align:center;font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#777777;}
+
+.center {
+  text-align: center;
+}
+.center .button{
+background-color: #f1f1f1;
+  color: black;
+  font-size: 16px;
+  padding: 16px 30px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+    <body>
+        <h1>Email verification is complete</h1>
+        <p>Email verification is now complete.</p>
+        <p>Please signin to start using sweatcheck</p>
+        
+        </body>
+<div class="center">
+	<button class="button"; id="signinbutton">signin</button>
+</body>
+</html>
+
+<script type="text/javascript">
+    document.getElementById("signinbutton").onclick = function () {
+        location.href = "signin";
+    };
+</script>

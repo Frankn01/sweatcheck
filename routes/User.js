@@ -31,6 +31,15 @@ const herokuUrl = "https://sweatcheck.herokuapp.com/"
 const redirectUrl = herokuUrl + "api/user/resetPassword"     // should end up being the page where the user can enter a new password
 
 
+function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  }
+
 // Email Transporter    // created 7-9
 let transporter = nodemailer.createTransport({
     service: "gmail",
@@ -47,8 +56,8 @@ let transporter = nodemailer.createTransport({
 //Register          // updated 7-16
 router.post('/signup', async (reg, res) => {
     let {firstName, lastName, email, login, password} = reg.body;
-    firstName = firstName.trim();
-    lastName = lastName.trim();
+    firstName = toTitleCase(firstName.trim());
+    lastName = toTitleCase(lastName.trim());
     email = email.trim();
     login = login.trim();
     password = password.trim();
