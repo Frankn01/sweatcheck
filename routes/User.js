@@ -283,7 +283,7 @@ router.post("/resendVerificationLink", async (req ,res) => {
                                 verificationImport
                                 .deleteOne({userId})
                                 .then(() => {
-                                    res.redirect('/verified')       //can delete when next line works properly 7-10
+                                    res.redirect('/api/user/verified')       //can delete when next line works properly 7-10
                                     // res.sendFile(path.join(__dirname, "./../views/verified.html"))       
                                 })
                                 .catch(error => {
