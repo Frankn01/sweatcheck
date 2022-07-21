@@ -326,7 +326,7 @@ router.post("/resendVerificationLink", async (req ,res) => {
 
     // doesnt need jwt
     router.get("/verified", (req,res) => {
-        res.sendFile(path.join(__dirname, "./../views/verified.html"))//might need to change
+        res.sendFile(path.join(__dirname, "../views/verified.html"))//might need to change
     })
 
 
