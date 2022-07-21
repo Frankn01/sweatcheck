@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
 
-//note first and last are not required to login
+//note first and last aredfsdfsdfsdf not required to login
 const usersSchema = new Schema({
     firstName: String,
     lastName: String,
