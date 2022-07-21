@@ -21,10 +21,10 @@ const verifyToken = require('../middleware/authentication')
 const router = express.Router()
 
 //get all workouts <------------------  working function *************
-router.get('/all/:userID', verifyToken, getWorkouts)    // can get rid of userID in url
+router.get('/all', verifyToken, getWorkouts)    // can get rid of userID in url
 
 //get all stats <------------------  working function *************
-router.get('/all/stats/:userID', verifyToken, getStats)
+router.get('/all/stats', verifyToken, getStats)
 
 //get a single stat
 router.get('/stats/:statID', getStat)
@@ -43,7 +43,7 @@ router.get('/:workoutID/:exerciseID', getExercise)
 
 //post a new stat    <------------------  working function *************
 // allows identical stats 7-2-22
-router.post('/:workoutID/:id', createStats)
+router.post('/stats/:exerciseID', createStats)
 
 //delete a workout <------------------  working function *************
 router.delete('/:workoutID', deleteWorkout)

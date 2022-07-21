@@ -123,11 +123,11 @@ const updateWorkout = async (req, res) =>{
 
 // add stats to an exercise
 const createStats = async (req, res) =>{
-    const {workoutID, id} = req.params
-    const {reps, sets, weight, exerciseID, userID} = req.body
+    const {workoutID, exerciseID} = req.params
+    const {reps, sets, weight, userID, createdAt} = req.body
 
     try {
-        const newStats = await Stats.create({reps, sets, weight, exerciseID: id, userID})
+        const newStats = await Stats.create({reps, sets, weight, exerciseID: exerciseID, userID, createdAt: Date.now()});
         res.json({
             status: "SUCCESS",
             message: "Stats were successfully created!",

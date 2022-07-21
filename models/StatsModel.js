@@ -23,6 +23,10 @@ const statsSchema = new Schema({
     userID: {
         type: ObjectId,
         required: true
+    },
+    createdAt: {
+        type: Date,
+        required: true
     }
 }, { versionKey: false })
 // ,{ timestamp: true }
