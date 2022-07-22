@@ -7,10 +7,12 @@ const {
     getExercise,
     getStats,
     getStat,
+    getExeStats,
     createStats,
     deleteWorkout,
     updateWorkout,
-    searchExercises
+    searchExercises,
+    blankSearch
 } = require('../controllers/workoutControllers')
 
 const statsImport = require('../models/StatsModel')
@@ -29,8 +31,12 @@ router.get('/all/stats', verifyToken, getStats)
 //get a single stat
 router.get('/stats/:statID', getStat)
 
+//get all stats for a certain exercise
+router.get('all/stats/:exerciseID', getExeStats)
+
 //search exercises
 router.get('/search/:key', searchExercises)
+router.get('/search', blankSearch)
 
 //get a single workout <------------------  working function *************
 router.get('/:workoutID', getWorkout)

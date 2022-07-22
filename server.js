@@ -5,8 +5,6 @@ const express = require('express')
 const Exercises = require('./models/ExerciseModel')
 
 const workoutRoutes = require('./routes/workouts')
-const loginRoutes = require('./routes/login')
-const registerRoutes = require('./routes/register')
 const userRoutes = require('./routes/User')
 
 const path = require('path')
@@ -26,8 +24,6 @@ app.use(cors());
 
 //routes
 app.use('/api/workouts',workoutRoutes)
-app.use('/api/login',loginRoutes)
-app.use('/api/register',registerRoutes)
 app.use('/api/user',userRoutes)
 
 

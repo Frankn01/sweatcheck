@@ -4,6 +4,15 @@ const Stats = require('../models/StatsModel')
 const mongoose = require('mongoose')
 const {ObjectId} = require('mongodb')
 
+function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  }
+
 // get all workouts
 const getWorkouts = async (req, res) => {
     const userID = req.user.userId
@@ -51,7 +60,6 @@ const getStats = async (req, res) => {
     // const { userID } = req.params
     const userID = req.user.userId
 
-
     const stats = await Stats.find({userID: userID}).sort({createdAt: -1})
 
     res.status(200).json(stats)
@@ -73,16 +81,33 @@ const getStat = async (req, res) => {
     const { statID  } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(statID)){
-        return res.status(404).json({error: 'No such exercise'})
+        return res.status(404).json({error: 'No such stat'})
     }
 
     const stat = await Stats.find({_id: statID})
  
     if(!stat) {
-        return res.status(404).json({error: 'No such exercise'})
+        return res.status(404).json({error: 'No such stat'})
     }
 
     res.status(200).json(stat)
+}
+
+const getExeStats = async (req, res) => {
+    const { exerciseID } = req.params
+    const userID = req.user.userId
+
+    if (!mongoose.Types.ObjectId.isValid(exerciseID)){
+        return res.status(404).json({error: 'No such exercise'})
+    }
+
+    const exeStats = await Stats.find({exerciseID: exerciseID, userID: userID}).sort({createdAt: -1})
+
+    if (!exerciseID){
+        return res.status(404).json({error: 'No such exercise'})
+    }
+    
+    res.status(200).json(exeStats)
 }
 
 // delete a workout
@@ -140,12 +165,26 @@ const createStats = async (req, res) =>{
 
 // search exercise
 const searchExercises = async (req, res, next) => {
-    let data = await Exercises.find({
-        "$or": [
-            {name:{$regex:req.params.key}}
-        ]
-    })
+    const {key} = req.params;
+    const data = null;
+    if(key == null){
+        
+    }
+    else{
+        let data = await Exercises.find({
+            "$or": [
+                {name:{$regex: req.params.key, $options: 'i'}}
+            ]
+        })
+        res.send(data)
+    }
     res.send(data)
+}
+
+const blankSearch = async (req, res, next) => {
+    let data = await Exercises.find({}).sort({createdAt: -1})
+    res.send(data)
+    console.log("Somethings right")
 }
 
 
@@ -155,9 +194,11 @@ module.exports = {
     getExercise,
     getStats,
     getStat,
+    getExeStats,
     deleteWorkout,
     updateWorkout,
     createWorkout,
     createStats,
-    searchExercises
+    searchExercises,
+    blankSearch
 }
