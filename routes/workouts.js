@@ -32,7 +32,7 @@ router.get('/all/stats', verifyToken, getStats)
 router.get('/stats/:statID', getStat)
 
 //get all stats for a certain exercise
-router.get('all/stats/:exerciseID', getExeStats)
+router.get('/all/stats/:exerciseID', verifyToken, getExeStats)
 
 //search exercises
 router.get('/search/:key', searchExercises)

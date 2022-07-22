@@ -106,7 +106,7 @@ const getExeStats = async (req, res) => {
     if (!exerciseID){
         return res.status(404).json({error: 'No such exercise'})
     }
-    
+
     res.status(200).json(exeStats)
 }
 
