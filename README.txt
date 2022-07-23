@@ -13,4 +13,9 @@ or wherever you have this project downloaded to
  please create a schema that is similar to the one i have already created for Stats
  
  
+ ------------info for mobile app-------------
+ screens and components of app are capitatlized, ex. Login.js
+ images that are used within the app are .png
+ App.js and RootStack contain code to start up code
+ 
 
