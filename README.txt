@@ -17,5 +17,7 @@ or wherever you have this project downloaded to
  screens and components of app are capitatlized, ex. Login.js
  images that are used within the app are .png
  App.js and RootStack contain code to start up code
+ start the code by running the command, expo start
+ (may need to install all the dependencies)
  
 
