@@ -29,32 +29,32 @@ router.get('/all', verifyToken, getWorkouts)    // can get rid of userID in url
 router.get('/all/stats', verifyToken, getStats)
 
 //get a single stat
-router.get('/stats/:statID', getStat)
+router.get('/stats/:statID', verifyToken, getStat)
 
 //get all stats for a certain exercise
 router.get('/all/stats/:exerciseID', verifyToken, getExeStats)
 
 //search exercises
-router.get('/search/:key', searchExercises)
-router.get('/search', blankSearch)
+router.get('/search', verifyToken, blankSearch)
+router.get('/search/:key', verifyToken, searchExercises)
 
 //get a single workout <------------------  working function *************
-router.get('/:workoutID', getWorkout)
+router.get('/:workoutID', verifyToken, getWorkout)
 
 //create workout <------------------  working function *************
-router.post('/', createWorkout)
+router.post('/', verifyToken, createWorkout)
 
 //get a single exercise <------------------  working function *************
-router.get('/:workoutID/:exerciseID', getExercise)
+router.get('/:workoutID/:exerciseID', verifyToken, getExercise)
 
 //post a new stat    <------------------  working function *************
 // allows identical stats 7-2-22
-router.post('/stats/:exerciseID', createStats)
+router.post('/stats/:exerciseID', verifyToken, createStats)
 
 //delete a workout <------------------  working function *************
-router.delete('/:workoutID', deleteWorkout)
+router.delete('/:workoutID', verifyToken, deleteWorkout)
 
 //update a workout <------------------  working function *************
-router.patch('/:workoutID', updateWorkout)
+router.patch('/:workoutID', verifyToken, updateWorkout)
 
 module.exports = router 
