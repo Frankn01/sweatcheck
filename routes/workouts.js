@@ -5,6 +5,7 @@ const {
     getWorkouts,
     getWorkout,
     getExercise,
+    getExercises,
     getStats,
     getStat,
     getExeStats,
@@ -27,6 +28,9 @@ router.get('/all', verifyToken, getWorkouts)    // can get rid of userID in url
 
 //get all stats <------------------  working function *************
 router.get('/all/stats', verifyToken, getStats)
+
+//get all exercises
+router.get('/all/exercises', verifyToken, getExercises)
 
 //get a single stat
 router.get('/stats/:statID', verifyToken, getStat)
