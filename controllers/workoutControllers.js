@@ -58,6 +58,12 @@ const getExercise = async (req, res) => {
     res.status(200).json(exercise)
 }
 
+const getExercises = async (req, res) =>{
+    const exercises = await Exercises.find({}).sort({createdAt: -1})
+
+    res.status(200).json(exercises) 
+}
+
 const getStats = async (req, res) => {
     // const { userID } = req.params
     const userID = req.user.userId
@@ -191,6 +197,7 @@ module.exports = {
     getWorkouts,
     getWorkout,
     getExercise,
+    getExercises,
     getStats,
     getStat,
     getExeStats,
