@@ -329,6 +329,10 @@ router.post("/resendVerificationLink", async (req ,res) => {
         res.sendFile(path.join(__dirname, "../views/verified.html"))//might need to change
     })
 
+    router.get("/success", (req,res) => {
+        res.sendFile(path.join(__dirname, "../views/success.PNG"))//might need to change
+    })
+
 
 // Login
 router.post('/signin', (req, res) => {
@@ -564,11 +568,11 @@ router.post("/resetPassword/:userId/:resetString", (req,res) => {
                                         message: "Error occured deleting reset request."
                                     })
                                 })
-                                
-                                res.json({
-                                    status: "SUCCESS",
-                                    message: "Password has been reset successfully."
-                                })
+                                res.redirect('/api/user/success')
+                                // res.json({
+                                //     status: "SUCCESS",
+                                //     message: "Password has been reset successfully."
+                                // })
                             })
                             .catch(error => {
                                 console.log(error)
