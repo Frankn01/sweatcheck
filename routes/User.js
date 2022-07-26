@@ -26,7 +26,7 @@ const nodemailer = require('nodemailer')
 const {v4:uuidv4} = require('uuid');
 const { deleteOne } = require('./../models/PasswordReset');
 
-const herokuUrl = "https://evening-peak-89288.herokuapp.com/"
+const herokuUrl = "https://sweatcheck.herokuapp.com/"
 
 const redirectUrl = herokuUrl + "api/user/resetPassword"     // should end up being the page where the user can enter a new password
 
